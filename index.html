@@ -332,39 +332,11 @@ async function runScan() {
   }, 700);
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{
-          role: 'user',
-          content: `You are TrustCheck, an expert scam and phishing detection AI. Analyse the following message carefully and respond ONLY with a valid JSON object — no markdown fences, no explanation, just the raw JSON.
-
-Required JSON structure:
-{
-  "verdict": "scam" | "safe" | "suspicious",
-  "score": <integer 0-100, where 100 = definitely a scam, 0 = definitely safe>,
-  "trust_score": <integer 0-100, inverse of score>,
-  "label": <short verdict phrase>,
-  "summary": <2-3 sentence explanation for a non-technical user>,
-  "flags": <array of 3-5 objects: { "text": "short flag under 10 words", "type": "bad"|"good"|"neutral" }>,
-  "advice": <one clear sentence of actionable advice>
-}
-
-Message to analyse:
-"""
-${msg.replace(/"/g,'\\"')}
-"""`
-        }]
-      })
-    });
+const response = await fetch('/scan', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ message: yourPrompt })
+});;
 
     clearInterval(stepTimer);
     steps.forEach(s => { document.getElementById(s).classList.remove('active'); document.getElementById(s).classList.add('done'); });
